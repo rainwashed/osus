@@ -1,0 +1,20 @@
+{
+    "prettier.tabWidth": 4,
+    "prettier.arrowParens": "always",
+    "prettier.bracketSameLine": true,
+    "prettier.useTabs": false,
+    "prettier.singleQuote": false,
+    "prettier.printWidth": 160,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "eslint.rules.customizations": [
+        {
+            "rule": "no-useless-catch",
+            "severity": "warn"
+        }
+    ],
+    "eslint.options": {
+        "configFile": "eslint.config.mjs"
+    },
+    "eslint.useFlatConfig": true
+}
