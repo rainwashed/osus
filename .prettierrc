@@ -6,5 +6,9 @@
     "singleQuote": false,
     "printWidth": 160,
     "trailingComma": "all",
-    "semi": true
+    "semi": true,
+    "bracketSpacing": true,
+    "htmlWhitespaceSensitivity": "ignore",
+    "vueIndentScriptAndStyle": true,
+    "singleAttributePerLine": true
 }

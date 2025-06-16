@@ -1,4 +1,3 @@
-
 export type SpotifyApiToken = {
     access_token: string;
     token_type: string;

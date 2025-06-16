@@ -35,7 +35,7 @@ const fetchOsuUsername = async () => {
         osuName.value = _request.username;
     } catch (error) {
         console.warn("osuUsernameFetch:", error);
-        // window.location.replace("/onboarding")
+        window.location.replace("/onboarding")
     }
 };
 

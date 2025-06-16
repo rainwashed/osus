@@ -7,4 +7,4 @@ export const fetchToOsu = async (uri: string, ...params: any[]) => {
     } catch (error) {
         throw error;
     }
-}
+};

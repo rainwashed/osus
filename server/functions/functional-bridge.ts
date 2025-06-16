@@ -4,4 +4,4 @@ import { fetchToOsu } from "../libs/osu-passthrough";
 
 export { createSpotifyAuthorizationLink, elevateSpotifyAuthorizationCodeToAccessToken };
 export { createOsuAuthorizationLink, elevateOsuAuthorizationCodeToAccessToken };
-export { fetchToOsu }
+export { fetchToOsu };

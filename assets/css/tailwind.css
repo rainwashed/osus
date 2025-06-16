@@ -117,12 +117,47 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
 }
 
+@font-face {
+  font-family: "Geist";
+  src: url("../fonts/Geist[wght].woff2") format("woff2");
+  font-weight: 100 200 300 400 500 600 700 800 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Geist";
+  src: url("../fonts/Geist-Italic[wght].woff2") format("woff2");
+  font-weight: 100 200 300 400 500 600 700 800 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Nunito";
+  src: url("../fonts/Nunito-VariableFont_wght.ttf") format("truetype");
+  font-weight: 100 200 300 400 500 600 700 800 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Nunito";
+  src: url("../fonts/Nunito-Italic-VariableFont_wght.ttf") format("truetype");
+  font-weight: 100 200 300 400 500 600 700 800 900;
+  font-style: italic;
+  font-display: swap;
+}
+
 @theme {
   --color-spotify: #1DB954;
   --color-osu: #DC98A4;
+  --default-font-family: "Geist";
+  --font-nunito: "Nunito"
 }

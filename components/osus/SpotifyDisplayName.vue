@@ -42,7 +42,7 @@ const fetchSpotifyUsername = async () => {
         spotifyName.value = _request.display_name;
     } catch (error) {
         console.warn("spotifyUsernameFetch:", error);
-        // window.location.replace("/onboarding")
+        window.location.replace("/onboarding")
     }
 };
 
