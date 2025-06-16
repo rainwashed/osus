@@ -9,7 +9,8 @@
         "preview": "nuxt preview",
         "postinstall": "nuxt prepare",
         "shadcn": "shadcn-vue",
-        "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\""
+        "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\"",
+        "cypress": "cypress"
     },
     "dependencies": {
         "@hypernym/nuxt-anime": "^2.1.1",
@@ -34,8 +35,11 @@
         "vue-router": "^4.5.1"
     },
     "devDependencies": {
+        "@types/cypress": "^1.1.6",
+        "cypress": "^14.4.1",
         "nuxt-server-fn": "^0.4.1",
         "prettier": "^3.5.3",
+        "sass-embedded": "^1.89.2",
         "shadcn-vue": "^2.2.0"
     }
 }
