@@ -38,7 +38,7 @@ export const elevateAuthorizationCodeToAccessToken = async (
   ).toString("base64");
 
   try {
-    console.log({ authorizationCode, redirectUri })
+    console.log({ authorizationCode, redirectUri });
 
     const params = new URLSearchParams();
     params.append("client_id", SPOTIFY_CLIENTID);
@@ -47,7 +47,7 @@ export const elevateAuthorizationCodeToAccessToken = async (
     params.append("redirect_uri", redirectUri);
 
     const requestForm = new URLSearchParams();
-    requestForm.set("client_id", SPOTIFY_CLIENTID)
+    requestForm.set("client_id", SPOTIFY_CLIENTID);
     requestForm.set("code", authorizationCode);
     requestForm.set("redirect_uri", redirectUri);
     requestForm.set("grant_type", "authorization_code");
@@ -59,7 +59,7 @@ export const elevateAuthorizationCodeToAccessToken = async (
         body: params,
         headers: {
           Authorization: `Basic ${_authorizationBuffer}`,
-          "Content-Type": "application/x-www-form-urlencoded"
+          "Content-Type": "application/x-www-form-urlencoded",
         },
       },
     );

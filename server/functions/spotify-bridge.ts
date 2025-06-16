@@ -1,3 +1,9 @@
-import { createSpotifyAuthorizationLink, elevateAuthorizationCodeToAccessToken } from "../libs/spotify";
+import {
+  createSpotifyAuthorizationLink,
+  elevateAuthorizationCodeToAccessToken,
+} from "../libs/spotify";
 
-export { createSpotifyAuthorizationLink, elevateAuthorizationCodeToAccessToken };
+export {
+  createSpotifyAuthorizationLink,
+  elevateAuthorizationCodeToAccessToken,
+};
