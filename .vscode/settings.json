@@ -18,5 +18,6 @@
     "eslint.options": {
         "configFile": "eslint.config.mjs"
     },
-    "eslint.useFlatConfig": true
+    "eslint.useFlatConfig": true,
+    "headwind.runOnSave": true
 }
