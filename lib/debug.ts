@@ -5,8 +5,6 @@ const originalConsole = console.log;
 const originalWarn = console.warn;
 const originalError = console.error;
 
-console.log({ debugState });
-
 console.log = (...args) => {
     if (debugState) {
         originalConsole.apply(console, args);

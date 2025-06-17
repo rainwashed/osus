@@ -6,8 +6,10 @@ import { generatePlaylist } from '~/lib/generate';
 const onGeneratePlaylistButtonClick = () => {
     console.log("generating");
 
-    const spotifyAccessToken: SpotifyApiToken = store.get("spotifyAuthentication");
-    const osuAccessToken: OsuApiToken = store.get("osuAccessToken");
+    const spotifyAccessToken: SpotifyApiToken = store.get("spotifyAuthorization");
+    const osuAccessToken: OsuApiToken = store.get("osuAuthorization");
+
+    console.log({spotifyAccessToken, osuAccessToken})
 
     if (spotifyAccessToken === null || osuAccessToken === null) {
         window.location.replace("/onboarding");
@@ -31,9 +33,16 @@ const onLogoutButtonClick = () => {
             Hello <span><OsusSpotifyDisplayName /></span> | <span><OsusOsuDisplayName /></span>,
         </h1>
         <h3 class="text-[2vmin]">ready to make a playlist?</h3>
-        <div class="flex flex-col mt-4 space-y-2 w-60">
-            <Button @click="onGeneratePlaylistButtonClick">Generate Playlist</Button>
-            <Button variant="outline">Configure</Button>
+        <div class="flex flex-col mt-4 space-y-2">
+            <Button @click="onGeneratePlaylistButtonClick" class="w-60">Generate Playlist</Button>
+            <Popover>
+                <PopoverTrigger>
+                    <Button variant="outline" class="w-60">Configure</Button>
+                </PopoverTrigger>
+                <PopoverContent class="w-[90vw] md:w-[50vw]">
+                    <OsusGenerationOptionsPopup />
+                </PopoverContent>
+            </Popover>
             <Button @click="onLogoutButtonClick" variant="destructive" class="mt-4" >Logout</Button>
         </div>
     </div>

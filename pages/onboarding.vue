@@ -13,7 +13,7 @@
         const spotifyLink = await createSpotifyAuthorizationLink("https://osus.rainwashed.xyz/redirect");
         store.set("lastProvider", "spotify", true);
 
-        window.open(spotifyLink, "_blank");
+        window.open(spotifyLink, "_target");
     };
 
     const osuOAuthClick = async () => {
@@ -22,7 +22,7 @@
         const osuLink = await createOsuAuthorizationLink("https://osus.rainwashed.xyz/redirect");
         store.set("lastProvider", "osu", true);
 
-        window.open(osuLink, "_blank");
+        window.open(osuLink, "_target");
     };
 
     const retrieveSpotifyAuthorization = async () => {
@@ -79,7 +79,7 @@
         console.log("storePrivacyAgreement clicked");
 
         const target = e?.target as unknown as HTMLElement;
-        const dataSlot = target.getAttribute("data-slot") 
+        const dataSlot = target.getAttribute("role") 
        
         console.log({target, dataSlot})
 
@@ -92,7 +92,7 @@
 <template>
     <div class="flex flex-col items-center justify-center h-full">
         <h1 class="text-[5vmin]">Authorize <span class="font-nunito">osus!</span></h1>
-        <span class="inline-flex flex-col md:flex-row space-x-2 space-y-2 [&>button]:w-60">
+        <span class="inline-flex flex-col md:flex-row space-x-2 mb-4 [&>button]:w-60">
         <Button
             class="shadow-md bg-spotify text-secondary hover:bg-spotify/90"
             @click="spotifyOAuthClick">

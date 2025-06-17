@@ -7,5 +7,4 @@ import "./authStore";
         <slot />
         <OsusDonateMeMoney />
     </main>
-
 </template>
