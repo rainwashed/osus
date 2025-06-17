@@ -7,12 +7,11 @@ export default defineNuxtConfig({
         prefix: "",
         componentDir: "./components/ui",
     },
-    vite: {
-    },
+    vite: {},
     postcss: {
         plugins: {
             tailwindcss: {},
-            autoprefixer: {}
+            autoprefixer: {},
         },
     },
     modules: [
