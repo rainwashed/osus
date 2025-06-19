@@ -70,29 +70,25 @@ const returnArtistSongName = (beatmap: OsuBeatmapScore) => [
     beatmap.beatmapset.title_unicode,
 ];
 
-const searchSpotifyForSong = async (spotifyToken: string, artistSongName: string[]) => {
+const searchSpotifyForSong = async (artistSongName: string[]) => {
     const params = new URLSearchParams({
         // q: `artist:${artistSongName[0]} track:${artistSongName[1]}`, // this way SUCKS
         q: `${artistSongName.join(" ")}`,
         type: `track`,
         limit: `${SPOTIFY_FETCH_CHUNKSIZE}`,
     });
-    const songData = (await $fetch(`https://api.spotify.com/v1/search?${params.toString()}`, {
-        headers: {
-            Authorization: `Bearer ${spotifyToken}`,
-        },
-    })) as SpotifySearchResponse;
+    const songData = (await $fetch(`/api/qspotify?${params.toString()}`)) as SpotifySearchResponse;
 
     return songData?.tracks?.items[0];
 };
 
-const searchFromKeywordsList = async (spotifyToken: string, searchKeywords: string[][]) => {
+const searchFromKeywordsList = async (searchKeywords: string[][]) => {
     const songData = [];
     for (let i = 0; i < searchKeywords.length; i++) {
         const curSong = searchKeywords[i];
         try {
             console.log(`attempting to search ${curSong}`);
-            let songMeta = await searchSpotifyForSong(spotifyToken, curSong);
+            let songMeta = await searchSpotifyForSong(curSong);
 
             if (songMeta === undefined || songMeta === null) {
                 console.warn(`could not find ${curSong}, skipping`);

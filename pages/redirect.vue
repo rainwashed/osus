@@ -15,14 +15,12 @@
 
         if (code !== null) {
             console.log("attempting to elevate spotify auth state");
-            const elevatedToken = await elevateSpotifyAuthorizationCodeToAccessToken(
-                code,
-                "https://osus.rainwashed.xyz/redirect",
-            );
+            const elevatedToken = await elevateSpotifyAuthorizationCodeToAccessToken(code);
 
             store.set("spotifyAuthorization", elevatedToken);
 
             authorizationState.value = true;
+
             window.location.replace("/");
         }
         if (error !== null && error === "access_denied") {
@@ -44,10 +42,7 @@
 
         if (code !== null) {
             console.log("attempting to elevate osu auth state");
-            const elevatedToken = await elevateOsuAuthorizationCodeToAccessToken(
-                code,
-                "https://osus.rainwashed.xyz/redirect",
-            );
+            const elevatedToken = await elevateOsuAuthorizationCodeToAccessToken(code);
             console.log({ elevatedToken });
             store.set("osuAuthorization", elevatedToken);
 
