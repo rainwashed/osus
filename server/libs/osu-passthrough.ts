@@ -8,3 +8,5 @@ export const fetchToOsu = async (uri: string, ...params: any[]) => {
         throw error;
     }
 };
+
+export const createTemporaryApiInterface = async (osuAccessToken: string) => {};

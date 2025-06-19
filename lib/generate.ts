@@ -1,29 +1,174 @@
-const OSU_FETCH_CHUNKSIZE = 20;
+const OSU_FETCH_CHUNKSIZE = 500;
+const SPOTIFY_FETCH_CHUNKSIZE = 5;
 
-export const generatePlaylist = async (spotifyAccessToken: string, osuAccessToken: string) => {
-    // begin first fetching all osu data
+const fetchOsuUserId = async (osuToken: string): Promise<string> => {
     const { fetchToOsu } = useServerFunctions();
 
-    try {
-        const osuRequest = (await fetchToOsu("https://osu.ppy.sh/api/v2/me/osu", {
-            headers: {
-                Authorization: `Bearer ${osuAccessToken}`,
-            },
-        })) as OsuProfile;
-        const personalId = osuRequest.id;
+    const request = (await fetchToOsu(`https://osu.ppy.sh/api/v2/me`, {
+        headers: { Authorization: `Bearer ${osuToken}` },
+    })) as OsuProfile;
 
-        console.log({ personalId });
+    return `${request.id}`;
+};
 
-        const recentBeatmaps = (await fetchToOsu(
-            `https://osu.ppy.sh/api/v2/users/${personalId}/scores/best?limit=${OSU_FETCH_CHUNKSIZE}`,
+const removeDuplicateBeatmaps = (scores: OsuBeatmapScore[]): OsuBeatmapScore[] => {
+    const seen = new Set<number>();
+    return scores.filter((score) => {
+        const id = score.beatmap.beatmapset_id;
+        if (seen.has(id)) {
+            return false;
+        }
+        seen.add(id);
+        return true;
+    });
+};
+
+const fetchAllOsuSongs = async (osuToken: string, osuId: string, osusConfiguration: OsusConfiguration) => {
+    const { fetchToOsu } = useServerFunctions();
+    let foundAllSongs = false;
+    let i = 0;
+
+    const osuSortType = {
+        recent: "recent",
+        oldest: "firsts",
+        best_performance: "best",
+        most_played: "best",
+    }[osusConfiguration.creation_order];
+
+    let beatmaps: OsuBeatmapScore[] = [];
+
+    do {
+        let params = new URLSearchParams({
+            limit: `${Math.min(OSU_FETCH_CHUNKSIZE, osusConfiguration.max_songs)}`,
+            offset: `${i}`,
+        });
+        let req = (await fetchToOsu(
+            `https://osu.ppy.sh/api/v2/users/${osuId}/scores/${osuSortType}?${params.toString()}`,
             {
-                headers: {
-                    Authorization: `Bearer ${osuAccessToken}`,
-                },
+                headers: { Authorization: `Bearer ${osuToken}` },
             },
-        )) as OsuBeatmapScores[];
+        )) as OsuBeatmapScore[];
+        beatmaps = [...beatmaps, ...req];
 
-        console.log({ recentBeatmaps });
+        console.log(`fetching page ${i} w/ ${OSU_FETCH_CHUNKSIZE} as chunksize`);
+        if (Array.from(req).length === 0) {
+            foundAllSongs = true;
+        }
+        i++;
+    } while (!foundAllSongs && i < Math.ceil(osusConfiguration.max_songs / OSU_FETCH_CHUNKSIZE));
+
+    // need to remove duplicates FIX THIS
+    const removedDuplicateBeatmaps = removeDuplicateBeatmaps(beatmaps);
+
+    console.log({ beatmaps });
+
+    return removedDuplicateBeatmaps;
+};
+
+const returnArtistSongName = (beatmap: OsuBeatmapScore) => [
+    beatmap.beatmapset.artist_unicode,
+    beatmap.beatmapset.title_unicode,
+];
+
+const searchSpotifyForSong = async (spotifyToken: string, artistSongName: string[]) => {
+    const params = new URLSearchParams({
+        // q: `artist:${artistSongName[0]} track:${artistSongName[1]}`, // this way SUCKS
+        q: `${artistSongName.join(" ")}`,
+        type: `track`,
+        limit: `${SPOTIFY_FETCH_CHUNKSIZE}`,
+    });
+    const songData = (await $fetch(`https://api.spotify.com/v1/search?${params.toString()}`, {
+        headers: {
+            Authorization: `Bearer ${spotifyToken}`,
+        },
+    })) as SpotifySearchResponse;
+
+    return songData?.tracks?.items[0];
+};
+
+const searchFromKeywordsList = async (spotifyToken: string, searchKeywords: string[][]) => {
+    const songData = [];
+    for (let i = 0; i < searchKeywords.length; i++) {
+        const curSong = searchKeywords[i];
+        try {
+            console.log(`attempting to search ${curSong}`);
+            let songMeta = await searchSpotifyForSong(spotifyToken, curSong);
+
+            if (songMeta === undefined || songMeta === null) {
+                console.warn(`could not find ${curSong}, skipping`);
+                continue;
+            }
+
+            songData.push(songMeta);
+        } catch (_e) {
+            console.warn(`skipping song ${curSong}`);
+        }
+    }
+
+    return songData;
+};
+
+const createSpotifyPlaylist = async (spotifyToken: string, trackIds: string[], firstSong: string) => {
+    // first get userId
+    const userIdRequest = (await $fetch("https://api.spotify.com/v1/me", {
+        headers: { Authorization: `Bearer ${spotifyToken}` },
+    })) as { id: string };
+    const userId = userIdRequest.id;
+
+    const createPlaylistPostRequest = (await $fetch(`https://api.spotify.com/v1/users/${userId}/playlists`, {
+        method: "POST",
+        body: {
+            name: `${firstSong} and other osus! generated songs`,
+            public: true,
+            description: `An osus! generated playlist. (${new Date().toLocaleDateString("en-US")})`,
+        },
+        headers: {
+            Authorization: `Bearer ${spotifyToken}`,
+        },
+    })) as SpotifyPlaylist;
+
+    const playlistId = createPlaylistPostRequest.id;
+
+    let i = 0;
+    do {
+        const sector = trackIds.slice(i * 100, (i + 1) * 100);
+        const convertedToSpotifyUris = sector.map((id) => `spotify:track:${id}`);
+
+        console.log({ sector, convertedToSpotifyUris });
+
+        let req = await $fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
+            method: "POST",
+            body: {
+                uris: convertedToSpotifyUris,
+            },
+            headers: {
+                Authorization: `Bearer ${spotifyToken}`,
+            },
+        });
+
+        i++;
+    } while (i < Math.ceil(trackIds.length / 100));
+
+    console.log(`created a new playlist with id ${playlistId}`);
+
+    return playlistId;
+};
+
+export const generatePlaylist = async (spotifyToken: string, osuToken: string) => {
+    try {
+        // retrieve latest configuration
+        const config = { ...osusConfigurationReactive.osusConfiguration };
+        const userId = await fetchOsuUserId(osuToken);
+        const songs = await fetchAllOsuSongs(osuToken, userId, config);
+        const searchKeywords = songs.map(returnArtistSongName);
+        const songTrackInformation = await searchFromKeywordsList(spotifyToken, searchKeywords);
+        const spotifyTrackIds = songTrackInformation.map((s) => s.id);
+
+        console.log({ songTrackInformation });
+
+        const playlistId = await createSpotifyPlaylist(spotifyToken, spotifyTrackIds, songTrackInformation[0].name);
+
+        console.log({ playlistId });
     } catch (error) {
         throw error;
     }

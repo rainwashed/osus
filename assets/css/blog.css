@@ -1,0 +1,57 @@
+h1 {
+    @apply mb-4 text-4xl font-bold;
+}
+
+h2 {
+    @apply mb-3 text-3xl font-semibold;
+}
+
+h3 {
+    @apply mb-2 text-2xl font-medium;
+}
+
+p {
+    @apply mb-4 text-base leading-relaxed;
+}
+
+a {
+    @apply text-blue-600 hover:underline;
+}
+
+ul,
+ol {
+    @apply mb-4 list-disc list-inside;
+}
+
+li {
+    @apply mb-1;
+}
+
+blockquote {
+    @apply pl-4 mb-4 italic border-l-4 border-gray-300;
+}
+
+pre {
+    @apply p-4 mb-4 overflow-x-auto bg-gray-100 rounded;
+}
+
+/* code {
+    @apply font-mono text-sm;
+} */
+
+img {
+    @apply h-auto max-w-full mb-4;
+}
+
+table {
+    @apply w-full mb-4 border-collapse;
+}
+
+th,
+td {
+    @apply p-2 border border-gray-300;
+}
+
+th {
+    @apply font-semibold bg-gray-200;
+}

@@ -1,82 +1,95 @@
 <script setup lang="ts">
-import store from "store2";
-const authorizationState = ref<boolean>();
-const providerState = ref<string | null>(store.get("lastProvider"));
-const { elevateSpotifyAuthorizationCodeToAccessToken, elevateOsuAuthorizationCodeToAccessToken} = useServerFunctions();
+    import store from "store2";
+    const authorizationState = ref<boolean>();
+    const providerState = ref<string | null>(store.get("lastProvider"));
+    const { elevateSpotifyAuthorizationCodeToAccessToken, elevateOsuAuthorizationCodeToAccessToken } =
+        useServerFunctions();
 
-const onSpotifyRedirect = async () => {
-    const urlSearchParams = new URLSearchParams(window.location.search);
-    const code = urlSearchParams.get("code");
-    const error = urlSearchParams.get("error");
-    const state = urlSearchParams.get("state");
+    const onSpotifyRedirect = async () => {
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        const code = urlSearchParams.get("code");
+        const error = urlSearchParams.get("error");
+        const state = urlSearchParams.get("state");
 
-    console.log({ code, error, state, });
+        console.log({ code, error, state });
 
-    if (code !== null) {
-        console.log("attempting to elevate spotify auth state");
-        const elevatedToken = await elevateSpotifyAuthorizationCodeToAccessToken(code, "https://osus.rainwashed.xyz/redirect");
+        if (code !== null) {
+            console.log("attempting to elevate spotify auth state");
+            const elevatedToken = await elevateSpotifyAuthorizationCodeToAccessToken(
+                code,
+                "https://osus.rainwashed.xyz/redirect",
+            );
 
-        store.set("spotifyAuthorization", elevatedToken);
-        
-        authorizationState.value = true;
-        window.location.replace("/")
-    }
-    if (error !== null && error === "access_denied") {
-        authorizationState.value = false;
-    } else {
-        console.warn("some parameters are missing");
-        authorizationState.value = false;
-    }
-};
+            store.set("spotifyAuthorization", elevatedToken);
 
-const onOsuRedirect = async () => {
-    const urlSearchParams = new URLSearchParams(window.location.search);
-    const code = urlSearchParams.get("code");
-    const error = urlSearchParams.get("error");
-    const error_description = urlSearchParams.get("error_description");
-    const state = urlSearchParams.get("state");
+            authorizationState.value = true;
+            window.location.replace("/");
+        }
+        if (error !== null && error === "access_denied") {
+            authorizationState.value = false;
+        } else {
+            console.warn("some parameters are missing");
+            authorizationState.value = false;
+        }
+    };
 
-    console.log({code, error, error_description, state})
+    const onOsuRedirect = async () => {
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        const code = urlSearchParams.get("code");
+        const error = urlSearchParams.get("error");
+        const error_description = urlSearchParams.get("error_description");
+        const state = urlSearchParams.get("state");
 
-    if (code !== null) {
-        console.log("attempting to elevate osu auth state");
-        const elevatedToken = await elevateOsuAuthorizationCodeToAccessToken(code, "https://osus.rainwashed.xyz/redirect");
-        console.log({elevatedToken}) 
-        store.set("osuAuthorization", elevatedToken);
+        console.log({ code, error, error_description, state });
 
-        authorizationState.value = true
-        window.location.replace("/")
-    } else {
-        console.warn("some parameters are missing");
-        authorizationState.value = false;
-    }
-}
+        if (code !== null) {
+            console.log("attempting to elevate osu auth state");
+            const elevatedToken = await elevateOsuAuthorizationCodeToAccessToken(
+                code,
+                "https://osus.rainwashed.xyz/redirect",
+            );
+            console.log({ elevatedToken });
+            store.set("osuAuthorization", elevatedToken);
 
-onMounted(() => {
-    const lastRedirectProvider = store.get("lastProvider");
+            authorizationState.value = true;
+            window.location.replace("/");
+        } else {
+            console.warn("some parameters are missing");
+            authorizationState.value = false;
+        }
+    };
 
-    console.log({ providerState, lastRedirectProvider });
+    onMounted(() => {
+        const lastRedirectProvider = store.get("lastProvider");
 
-    switch (lastRedirectProvider) {
-        case "spotify":
-            onSpotifyRedirect();
-            break;
-        case "osu":
-            onOsuRedirect();
-            break;
-        default:
-            break;
-    }
-});
+        console.log({ providerState, lastRedirectProvider });
 
-onBeforeUnmount(() => {
-    console.warn("clearing last provider storage");
-    store.remove("lastProvider");
-});
+        switch (lastRedirectProvider) {
+            case "spotify":
+                onSpotifyRedirect();
+                break;
+            case "osu":
+                onOsuRedirect();
+                break;
+            default:
+                break;
+        }
+    });
+
+    onBeforeUnmount(() => {
+        console.warn("clearing last provider storage");
+        store.remove("lastProvider");
+    });
 </script>
 <template>
     <div>
-        <p v-if="providerState !== null">You have <span v-if="authorizationState">authorized</span> <span v-else>denied</span> access to <span>{{ providerState }}</span></p>
+        <p v-if="providerState !== null">
+            You have
+            <span v-if="authorizationState">authorized</span>
+            <span v-else>denied</span>
+            access to
+            <span>{{ providerState }}</span>
+        </p>
         <p v-else>No provider state was given. This should only be accessed from redirects and not directly.</p>
     </div>
 </template>

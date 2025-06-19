@@ -1,11 +1,13 @@
 const OSU_CLIENTID: string | undefined = process.env["OSU_CLIENT_ID"];
 const OSU_CLIENTSECRET: string | undefined = process.env["OSU_CLIENT_SECRET"];
 const OSU_SCOPE_PERMISSIONS = "public identify";
+const REDIRECT_URI: string | undefined = process.env["OAUTH_REDIRECTION_LINK"]
 
 if (OSU_CLIENTID === undefined) throw new Error("OSU_CLIENT_ID is not set in .env");
 if (OSU_CLIENTSECRET === undefined) throw new Error("OSU_CLIENT_SECRET is not set in .env");
+if (REDIRECT_URI === undefined) throw new Error("OAUTH_REDIRECTION_LINK is not set in .env");
 
-export const createOsuAuthorizationLink = (redirectUri: string) => {
+export const createOsuAuthorizationLink = () => {
     const _params = new URLSearchParams({
         response_type: "code",
         client_id: OSU_CLIENTID,
@@ -13,7 +15,7 @@ export const createOsuAuthorizationLink = (redirectUri: string) => {
         state: Math.floor(Date.now() * Math.random()).toString(),
     });
 
-    return `https://osu.ppy.sh/oauth/authorize?${_params.toString()}&redirect_uri=${redirectUri}`;
+    return `https://osu.ppy.sh/oauth/authorize?${_params.toString()}&redirect_uri=${REDIRECT_URI}`;
 };
 
 type OsuApiToken = {
@@ -23,16 +25,14 @@ type OsuApiToken = {
     refresh_token: string;
 };
 
-export const elevateOsuAuthorizationCodeToAccessToken = async (authorizationCode: string, redirectUri: string) => {
+export const elevateOsuAuthorizationCodeToAccessToken = async (authorizationCode: string) => {
     try {
-        console.log({ authorizationCode, redirectUri });
-
         const params = new URLSearchParams();
         params.append("client_id", OSU_CLIENTID);
         params.append("grant_type", "authorization_code");
         params.append("client_secret", OSU_CLIENTSECRET);
         params.append("code", authorizationCode);
-        params.append("redirect_uri", redirectUri);
+        params.append("redirect_uri", REDIRECT_URI);
 
         const _request: OsuApiToken = await $fetch("https://osu.ppy.sh/oauth/token", {
             method: "POST",

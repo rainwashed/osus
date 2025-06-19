@@ -22,5 +22,10 @@ export default defineNuxtConfig({
         "@hypernym/nuxt-anime",
         "shadcn-nuxt",
         "nuxt-server-fn",
+        "@formkit/auto-animate/nuxt",
+        "@nuxt/content",
     ],
+    runtimeConfig: {
+
+    }
 });

@@ -19,5 +19,8 @@
         "configFile": "eslint.config.mjs"
     },
     "eslint.useFlatConfig": true,
-    "headwind.runOnSave": true
+    "headwind.runOnSave": true,
+    "[vue]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
 }

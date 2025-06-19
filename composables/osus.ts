@@ -16,7 +16,7 @@ export const DefaultOsusConfiguration: OsusConfiguration = {
     creation_order: "best_performance",
     gamemode: ["catch", "mania", "standard", "taiko"],
     maptype: ["favorite", "graveyard", "guest", "loved", "nominated", "pending", "ranked"],
-    max_songs: 10_000, // 10,000 is the max amount of songs for a singular spotify playlist
+    max_songs: 50, // 10,000 is the max amount of songs for a singular spotify playlist
     min_pp_score: 0,
     min_completion_accuracy: 0,
     min_star_rating: 0,
