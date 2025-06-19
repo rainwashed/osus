@@ -30,6 +30,7 @@
         "eslint": "^9.0.0",
         "lastfm-ts-api": "^2.2.0",
         "lucide-vue-next": "^0.516.0",
+        "mitt": "^3.0.1",
         "nuxt": "^3.17.5",
         "osu-api-v2-js": "^2.0.1",
         "reka-ui": "^2.3.1",

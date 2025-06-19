@@ -6,6 +6,8 @@
     const onGeneratePlaylistButtonClick = () => {
         console.log("generating");
 
+        isUndergoingProcess.active = true;
+
         const spotifyAccessToken: SpotifyApiToken = store.get("spotifyAuthorization");
         const osuAccessToken: OsuApiToken = store.get("osuAuthorization");
 
@@ -47,8 +49,17 @@
         <div class="flex flex-col mt-4 space-y-2 w-80">
             <Button
                 @click="onGeneratePlaylistButtonClick"
+                :disabled="isUndergoingProcess.active"
                 class="w-full">
-                Generate Playlist
+                <span v-if="!isUndergoingProcess.active">Generate Playlist</span>
+                <span
+                    class="flex justify-center items-center space-x-2"
+                    v-else>
+                    <Icon
+                        name="i-line-md-loading-loop"
+                        class="text-xl" />
+                    <span>Generating...</span>
+                </span>
             </Button>
             <Popover>
                 <PopoverTrigger>
@@ -72,5 +83,6 @@
                 * not all songs will be perfectly found from osu! on Spotify
             </span>
         </div>
+        <OsusNotificationArea />
     </div>
 </template>

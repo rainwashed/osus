@@ -14,7 +14,7 @@ const fetchOsuUserId = async (osuToken: string): Promise<string> => {
 const removeDuplicateBeatmaps = (scores: OsuBeatmapScore[]): OsuBeatmapScore[] => {
     const seen = new Set<number>();
     return scores.filter((score) => {
-        const id = score.beatmap.beatmapset_id;
+        const id = score.beatmap.id;
         if (seen.has(id)) {
             return false;
         }
@@ -58,6 +58,7 @@ const fetchAllOsuSongs = async (osuToken: string, osuId: string, osusConfigurati
     } while (!foundAllSongs && i < Math.ceil(osusConfiguration.max_songs / OSU_FETCH_CHUNKSIZE));
 
     // need to remove duplicates FIX THIS
+    // i think i fixed it
     const removedDuplicateBeatmaps = removeDuplicateBeatmaps(beatmaps);
 
     console.log({ beatmaps });
@@ -71,13 +72,15 @@ const returnArtistSongName = (beatmap: OsuBeatmapScore) => [
 ];
 
 const searchSpotifyForSong = async (artistSongName: string[]) => {
+    const { returnSpotifyProxyUrl } = useServerFunctions();
+    const spotifyProxyUrl = await returnSpotifyProxyUrl();
     const params = new URLSearchParams({
         // q: `artist:${artistSongName[0]} track:${artistSongName[1]}`, // this way SUCKS
         q: `${artistSongName.join(" ")}`,
         type: `track`,
         limit: `${SPOTIFY_FETCH_CHUNKSIZE}`,
     });
-    const songData = (await $fetch(`/api/qspotify?${params.toString()}`)) as SpotifySearchResponse;
+    const songData = (await $fetch(`${spotifyProxyUrl}/v1/search?${params.toString()}`)) as SpotifySearchResponse;
 
     return songData?.tracks?.items[0];
 };
@@ -152,19 +155,38 @@ const createSpotifyPlaylist = async (spotifyToken: string, trackIds: string[], f
 
 export const generatePlaylist = async (spotifyToken: string, osuToken: string) => {
     try {
+        const notificationBus = useNuxtApp().$bus;
         // retrieve latest configuration
+        notificationBus.emit("notify", "retrieving osus! configuration");
         const config = { ...osusConfigurationReactive.osusConfiguration };
+        notificationBus.emit("notify", "retrieved osus! configuration");
+
+        notificationBus.emit("notify", "fetching osu! user's id");
         const userId = await fetchOsuUserId(osuToken);
+        notificationBus.emit("notify", `retrieved osu! user's id: ${userId}`);
+
+        notificationBus.emit("notify", "fetching osu! songs");
         const songs = await fetchAllOsuSongs(osuToken, userId, config);
+        notificationBus.emit("notify", "fetched osu! songs");
+
+        notificationBus.emit("notify", "converting to search terms");
         const searchKeywords = songs.map(returnArtistSongName);
-        const songTrackInformation = await searchFromKeywordsList(spotifyToken, searchKeywords);
+        notificationBus.emit("notify", "converted to search terms");
+
+        notificationBus.emit("notify", "searching for spotify tracks using search terms");
+        const songTrackInformation = await searchFromKeywordsList(searchKeywords);
         const spotifyTrackIds = songTrackInformation.map((s) => s.id);
+        notificationBus.emit("notify", "found spotify tracks and converted to spotify ids");
 
         console.log({ songTrackInformation });
 
+        notificationBus.emit("notify", "creating the spotify playlist");
         const playlistId = await createSpotifyPlaylist(spotifyToken, spotifyTrackIds, songTrackInformation[0].name);
+        notificationBus.emit("notify", `created the spotify playlist with id: ${playlistId}`)
 
         console.log({ playlistId });
+
+        isUndergoingProcess.active = false;
     } catch (error) {
         throw error;
     }
