@@ -20,9 +20,7 @@ export default defineNuxtConfig({
     },
     modules: [
         "@nuxt/eslint",
-        "@nuxt/fonts",
         "@nuxt/icon",
-        "@nuxt/image",
         "@hypernym/nuxt-anime",
         "shadcn-nuxt",
         "nuxt-server-fn",
@@ -45,6 +43,11 @@ export default defineNuxtConfig({
                     href: "/favicon.ico"
                 }
             ]
+        }
+    },
+    nitro: {
+        externals: {
+            inline: ["ofetch"]
         }
     }
 });
