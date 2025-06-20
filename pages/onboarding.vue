@@ -225,25 +225,41 @@
     <AlertDialog
         :open="isSpotifyAuthorizationPopupShown"
         :default-open="false">
-        <AlertDialogContent class="max-w-[90vw] w-[90vw]! max-h-[80vh]">
+        <AlertDialogContent class="max-h-[80vh]">
             <AlertDialogHeader>
-                <AlertDialogTrigger>Retrieve your authorization header</AlertDialogTrigger>
-                <AlertDialogDescription class="flex flex-col items-center max-h-[66%]">
-                    <img
-                        src="~/assets/images/steps.gif"
-                        class="w-auto h-[50%] mb-4" />
+                <AlertDialogTitle>Retrieve your authorization header:</AlertDialogTitle>
+                <AlertDialogDescription class="flex flex-col items-center">
+                    <!-- <OsusImageEnlarger src="/images/steps.gif">Show Gif</OsusImageEnlarger> -->
+                    <div class="flex flex-col mb-2">
+                        <span class="font-semibold">Step 1</span>
+                        <span>Open the Chrome Developer Tools by using cmd+shift+i or ctrl+shift+i.</span>
+                        <span class="font-semibold">Step 2</span>
+                        <span>Navigate to the network tab, seen at the top, and filter by Fetch/XHR requests.</span>
+                        <span class="font-semibold">Step 3</span>
+                        <span>Find a "query" event (you might need to reload the page)</span>
+                        <span class="font-semibold">Step 4</span>
+                        <span>Copy the Authorization header value, which would be your Oauth token.</span>
+                        <a
+                            class="underline"
+                            href="https://jmp.sh/uTMpe6p2"
+                            target="_blank">
+                            Here is a gif demonstrating it.
+                        </a>
+                    </div>
                     <Textarea
                         placeholder="Bearer ................................."
                         v-model:model-value="selfPastedOauthAuthorizationValue"
-                        class="resize-none"></Textarea>
+                        class="resize-none mb-2"></Textarea>
+                    <span>
+                        If you do not fully trust osus!, do this process on a new Spotify account and share the playlist
+                        it generates with yourself.
+                    </span>
                 </AlertDialogDescription>
-                <span class="ml-auto space-x-2">
-                    <AlertDialogCancel @click="() => (isSpotifyAuthorizationPopupShown = false)">
-                        Cancel
-                    </AlertDialogCancel>
-                    <AlertDialogAction @click="createFakeAuthorizationValue">Submit</AlertDialogAction>
-                </span>
             </AlertDialogHeader>
+            <AlertDialogFooter>
+                <AlertDialogCancel @click="() => (isSpotifyAuthorizationPopupShown = false)">Cancel</AlertDialogCancel>
+                <AlertDialogAction @click="createFakeAuthorizationValue">Submit</AlertDialogAction>
+            </AlertDialogFooter>
         </AlertDialogContent>
     </AlertDialog>
 </template>

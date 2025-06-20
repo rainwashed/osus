@@ -33,6 +33,16 @@ Therefore, the best course of action is not to poke the bear and to see what can
 
 #### Using a personal OAuth token instead
 
+Currently, osus! is using a workaround method that involves two parts:
+
+1. The authorization header that is Spotify uses on their native platform to create playlist
+2. A proxy servers in order to query songs to Spotify
+
+Now, I can understand your distrust when it requires that you give up your own personal OAuth token, and I cannot do much to win your trust except state that this project is **fully open source** and can be found [here](https://github.com/rainwashed/osus). The oauth token that you provide is **only ever stored in localStorage** and never is sent to anywhere except for Spotify's api (which is called in the browser context and not in the server context). The only time the proxy Spotify server is used, whose source can be found [here](https://github.com/rainwashed/spotify-public-proxy), is to query for songs based on the artist and title.
+
+If you are truly distrustful, I suggest you create a temporary or alternate account for Spotify, and once osus! creates the playlist, you can share it with yourself or (if you use spicetify) copy the playlist to your primary account.
+
+Knowing that, if you want Spotify access, this button will confirm it:
 ::confirm
 ::
 

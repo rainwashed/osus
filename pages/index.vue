@@ -3,6 +3,10 @@
     import type { OsuApiToken, SpotifyApiToken } from "~/lib/authtests";
     import { generatePlaylist } from "~/lib/generate";
 
+    useSeoMeta({
+        title: "osus! - Generate",
+    });
+
     const onGeneratePlaylistButtonClick = () => {
         console.log("generating");
 
@@ -84,5 +88,9 @@
             </span>
         </div>
         <OsusNotificationArea />
+        <span class="text-primary/80">
+            made with 🩷 from
+            <a href="https://lizj.xyz">rainwashed</a>
+        </span>
     </div>
 </template>

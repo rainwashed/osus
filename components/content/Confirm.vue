@@ -9,7 +9,7 @@
 <template>
     <AlertDialog>
         <AlertDialogTrigger as-child>
-            <Default>I still want Spotify Access</Default>
+            <Button>I still want Spotify Access</Button>
         </AlertDialogTrigger>
         <AlertDialogContent class="max-w-[70vw] max-h-[80vh]">
             <AlertDialogHeader class="font-bold">

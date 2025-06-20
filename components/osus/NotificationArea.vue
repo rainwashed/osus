@@ -29,7 +29,7 @@
 <template>
     <Textarea
         ref="textarea"
-        class="resize-none w-[60%]"
+        class="resize-none w-[60%] mt-4"
         readonly
         v-bind:model-value="logInformation.join('\n')"
         @change="scrollTextAreaToBottom"></Textarea>

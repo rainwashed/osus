@@ -27,5 +27,20 @@ export default defineNuxtConfig({
     ],
     runtimeConfig: {
 
+    },
+    app: {
+        head: {
+            title: "osus!",
+            htmlAttrs: {
+                lang: "en",
+            },
+            link: [
+                {
+                    rel: "icon",
+                    type: "image/x-icon",
+                    href: "/favicon.ico"
+                }
+            ]
+        }
     }
 });

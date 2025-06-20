@@ -37,17 +37,30 @@
             day: "numeric",
         });
     };
+
+    const showSpaceBackground = ref<boolean>(true);
+    const toggleSpaceBackground = () => (showSpaceBackground.value = !showSpaceBackground.value);
 </script>
 <template>
     <template v-if="post">
-        <header class="w-full h-[20vh] md:h-[50vh] bg-black/30">
-            <h1 class="text-5xl">
-                {{ post.title }}
-            </h1>
-            <h3>{{ post.author }}</h3>
-            <h4>{{ parseAndFormatDate(post.date) }}</h4>
+        <header class="relative w-full h-[20vh] md:h-[50vh] bg-black">
+            <!-- <Button
+                variant="secondary"
+                class="absolute right-2 bottom-2 z-[99999]"
+                @click="toggleSpaceBackground">
+                Toggle background
+            </Button> -->
+            <OsusSpaceHeader v-if="showSpaceBackground">
+                <div class="flex flex-col">
+                    <h1 class="text-5xl">
+                        {{ post.title }}
+                    </h1>
+                    <h3>{{ post.author }}</h3>
+                    <h4>{{ parseAndFormatDate(post.date) }}</h4>
+                </div>
+            </OsusSpaceHeader>
         </header>
-        <div class="w-[90vw] md:w-[60vw] p-4 bg-red-300 mx-auto">
+        <div class="w-[90vw] md:w-[60vw] p-4 mx-auto">
             <ContentRenderer :value="post" />
         </div>
     </template>
