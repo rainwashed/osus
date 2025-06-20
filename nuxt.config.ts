@@ -7,7 +7,11 @@ export default defineNuxtConfig({
         prefix: "",
         componentDir: "./components/ui",
     },
-    vite: {},
+    vite: {
+        server: {
+            allowedHosts: true,
+        }
+    },
     postcss: {
         plugins: {
             tailwindcss: {},

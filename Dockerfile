@@ -1,28 +1,39 @@
-FROM oven/bun:latest AS build
+# Stage 1: Build with Node 20
+FROM node:20-slim AS builder
+
 WORKDIR /app
 
-COPY package.json ./
+# Copy package files and install dependencies (build stage)
+COPY package.json bun.lock package-lock.json* ./
 
-RUN bun install
+# If you have both npm/yarn/bun lock files, adjust accordingly.
+RUN npm install
 
+# Copy all source code
 COPY . .
 
-RUN bun run build
+# Build your Nuxt app
+RUN npm run build
 
-FROM oven/bun:latest AS production
+# Stage 2: Runtime with Bun
+FROM oven/bun:1.1.6-slim
+
 WORKDIR /app
 
-COPY --from=build /app/.output /app/
+# Copy package files (optional but good for Bun)
+COPY package.json bun.lock ./
 
-ENV PORT=80
-ENV HOST=0.0.0.0
+# Copy production node_modules from builder (already built with Node 20)
+COPY --from=builder /app/node_modules ./node_modules
 
-# make sure to set the .env when using docker run or docker compose
-ENV SPOTIFY_CLIENT_ID=
-ENV SPOTIFY_CLIENT_SECRET=
-ENV OSU_CLIENT_ID=
-ENV OSU_CLIENT_SECRET=
+# Copy built Nuxt output
+COPY --from=builder /app/.output ./.output
+
+# Set Nuxt environment to listen on 0.0.0.0 and port 80
+ENV NITRO_PORT=80
+ENV NITRO_HOST=0.0.0.0
 
 EXPOSE 80
 
-ENTRYPOINT [ "bun", "run", "/app/server/index.mjs" ]
+# Run Nuxt with Bun runtime
+CMD ["bun", "run", ".output/server/index.mjs"]
