@@ -1,26 +1,36 @@
-# use the official Bun image
-# see all versions at https://hub.docker.com/r/oven/bun/tags
-FROM oven/bun:canary AS build
+# Use official Node.js image
+FROM node:20-alpine AS build
+
+# Set working directory
 WORKDIR /app
 
+# Copy dependency files first for better caching
 COPY package.json ./
+
+# Install dependencies
+# Optional: use `npm_config_build_from_source=false` to avoid building native modules
+ENV npm_config_build_from_source=false
+
+# Use prebuilt binaries if possible (you can also preinstall better-sqlite3 manually from binary)
+RUN npm install --ignore-scripts
+
+# Copy rest of the application
 COPY . .
 
-RUN bun install --ignore-scripts better-sqlite3
-# use ignore-scripts to avoid builting node modules like better-sqlite3
-RUN bun install --frozen-lockfile
+# Install scripts separately if needed now (or avoid if better-sqlite3 is problematic)
+RUN npm install --omit=dev
 
-# Copy the entire project
-RUN bun --bun run build
+# Build the app
+RUN npm run build
 
-# Change the port and host
+# Set environment variables
 ENV PORT=80
 ENV HOST=0.0.0.0
-# Set Nuxt environment to listen on 0.0.0.0 and port 80
 ENV NITRO_PORT=80
 ENV NITRO_HOST=0.0.0.0
 
+# Expose port
 EXPOSE 80
 
-CMD ["bun", "--bun", "run", "/app/.output/server/index.mjs"]
-
+# Start the server
+CMD ["node", ".output/server/index.mjs"]
