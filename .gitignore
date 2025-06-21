@@ -24,4 +24,4 @@ logs
 !.env.example
 *.lock
 
-./docker-compose.yaml
+.docker/
