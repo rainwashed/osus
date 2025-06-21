@@ -1,36 +1,30 @@
-# Use official Node.js image
-FROM node:20-alpine AS build
-
-# Set working directory
+# Build stage
+FROM oven/bun:canary AS build
 WORKDIR /app
 
-# Copy dependency files first for better caching
 COPY package.json ./
-
-# Install dependencies
-# Optional: use `npm_config_build_from_source=false` to avoid building native modules
-ENV npm_config_build_from_source=false
-
-# Use prebuilt binaries if possible (you can also preinstall better-sqlite3 manually from binary)
-RUN npm install --ignore-scripts
-
-# Copy rest of the application
 COPY . .
 
-# Install scripts separately if needed now (or avoid if better-sqlite3 is problematic)
-RUN npm install --omit=dev
+RUN bun install --ignore-scripts better-sqlite3
+RUN bun install --frozen-lockfile
 
-# Build the app
-RUN npm run build
+# Run Nuxt build
+RUN bun --bun run build
 
-# Set environment variables
+# Production stage
+FROM oven/bun:canary AS runner
+WORKDIR /app
+
+# Copy built app from previous stage
+COPY --from=build /app/.output ./.output
+
+# Set env vars
 ENV PORT=80
 ENV HOST=0.0.0.0
 ENV NITRO_PORT=80
 ENV NITRO_HOST=0.0.0.0
 
-# Expose port
 EXPOSE 80
 
-# Start the server
-CMD ["node", ".output/server/index.mjs"]
+# Start Nitro server
+CMD ["bun", "--bun", "run", ".output/server/index.mjs"]
