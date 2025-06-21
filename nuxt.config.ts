@@ -1,5 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+    ssr: true,
     compatibilityDate: "2025-05-15",
     devtools: { enabled: true },
     css: ["~/assets/css/tailwind.css"],
@@ -19,11 +20,11 @@ export default defineNuxtConfig({
         },
     },
     modules: [
+        "nuxt-server-fn",
         "@nuxt/eslint",
         "@nuxt/icon",
         "@hypernym/nuxt-anime",
         "shadcn-nuxt",
-        "nuxt-server-fn",
         "@formkit/auto-animate/nuxt",
         "@nuxt/content",
     ],
@@ -46,8 +47,14 @@ export default defineNuxtConfig({
         }
     },
     nitro: {
-        externals: {
-            inline: ["ofetch"]
-        }
+        preset: "node-server",
+        // externals: {
+        //     inline: ["ofetch"]
+        // }
+    },
+    build: {
+        transpile: [
+            "nuxt-server-fn"
+        ]
     }
 });

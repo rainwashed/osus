@@ -2,10 +2,9 @@
     import store from "store2";
     const authorizationState = ref<boolean>();
     const providerState = ref<string | null>(store.get("lastProvider"));
-    const { elevateSpotifyAuthorizationCodeToAccessToken, elevateOsuAuthorizationCodeToAccessToken } =
-        useServerFunctions();
 
     const onSpotifyRedirect = async () => {
+        const { elevateSpotifyAuthorizationCodeToAccessToken } = useServerFunctions({ cache: false });
         const urlSearchParams = new URLSearchParams(window.location.search);
         const code = urlSearchParams.get("code");
         const error = urlSearchParams.get("error");
@@ -32,6 +31,7 @@
     };
 
     const onOsuRedirect = async () => {
+        const { elevateOsuAuthorizationCodeToAccessToken } = useServerFunctions({ cache: false });
         const urlSearchParams = new URLSearchParams(window.location.search);
         const code = urlSearchParams.get("code");
         const error = urlSearchParams.get("error");
