@@ -26,6 +26,8 @@ type OsuApiToken = {
 };
 
 export const elevateOsuAuthorizationCodeToAccessToken = async (authorizationCode: string) => {
+    console.log(authorizationCode);
+
     try {
         const params = new URLSearchParams();
         params.append("client_id", OSU_CLIENTID);
@@ -36,7 +38,7 @@ export const elevateOsuAuthorizationCodeToAccessToken = async (authorizationCode
 
         const _request: OsuApiToken = await $fetch("https://osu.ppy.sh/oauth/token", {
             method: "POST",
-            body: params,
+            body: params.toString(),
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/x-www-form-urlencoded",
@@ -47,6 +49,7 @@ export const elevateOsuAuthorizationCodeToAccessToken = async (authorizationCode
 
         return _request;
     } catch (error) {
+        console.error(error);
         throw error;
     }
 };

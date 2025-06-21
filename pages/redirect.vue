@@ -2,10 +2,9 @@
     import store from "store2";
     const authorizationState = ref<boolean>();
     const providerState = ref<string | null>(store.get("lastProvider"));
-    const { elevateSpotifyAuthorizationCodeToAccessToken, elevateOsuAuthorizationCodeToAccessToken } =
-        useServerFunctions();
 
     const onSpotifyRedirect = async () => {
+        const { elevateSpotifyAuthorizationCodeToAccessToken } = useServerFunctions({ cache: false });
         const urlSearchParams = new URLSearchParams(window.location.search);
         const code = urlSearchParams.get("code");
         const error = urlSearchParams.get("error");
@@ -15,14 +14,12 @@
 
         if (code !== null) {
             console.log("attempting to elevate spotify auth state");
-            const elevatedToken = await elevateSpotifyAuthorizationCodeToAccessToken(
-                code,
-                "https://osus.rainwashed.xyz/redirect",
-            );
+            const elevatedToken = await elevateSpotifyAuthorizationCodeToAccessToken(code);
 
             store.set("spotifyAuthorization", elevatedToken);
 
             authorizationState.value = true;
+
             window.location.replace("/");
         }
         if (error !== null && error === "access_denied") {
@@ -34,6 +31,7 @@
     };
 
     const onOsuRedirect = async () => {
+        const { elevateOsuAuthorizationCodeToAccessToken } = useServerFunctions({ cache: false });
         const urlSearchParams = new URLSearchParams(window.location.search);
         const code = urlSearchParams.get("code");
         const error = urlSearchParams.get("error");
@@ -44,10 +42,7 @@
 
         if (code !== null) {
             console.log("attempting to elevate osu auth state");
-            const elevatedToken = await elevateOsuAuthorizationCodeToAccessToken(
-                code,
-                "https://osus.rainwashed.xyz/redirect",
-            );
+            const elevatedToken = await elevateOsuAuthorizationCodeToAccessToken(code);
             console.log({ elevatedToken });
             store.set("osuAuthorization", elevatedToken);
 

@@ -31,33 +31,34 @@ export const OsusConfigurationSchema = z.object({
         z.literal("best_performance"),
         z.literal("most_played"),
     ]),
-    gamemode: z.array(z.union([z.literal("catch"), z.literal("mania"), z.literal("standard"), z.literal("taiko")])),
-    maptype: z.array(
-        z.union([
-            z.literal("favorite"),
-            z.literal("graveyard"),
-            z.literal("guest"),
-            z.literal("loved"),
-            z.literal("nominated"),
-            z.literal("pending"),
-            z.literal("ranked"),
-        ]),
-    ),
+    gamemode: z.array(z.union([
+        z.literal("catch"),
+        z.literal("mania"),
+        z.literal("standard"),
+        z.literal("taiko"),
+    ])),
+    maptype: z.array(z.union([
+        z.literal("favorite"),
+        z.literal("graveyard"),
+        z.literal("guest"),
+        z.literal("loved"),
+        z.literal("nominated"),
+        z.literal("pending"),
+        z.literal("ranked"),
+    ])),
     max_songs: z.number().int().min(1).max(10_000), // Assuming a minimum of 1 song
     min_pp_score: z.number().min(0),
     min_completion_accuracy: z.number().min(0).max(100), // Assuming accuracy is a percentage from 0 to 100
     min_star_rating: z.number().min(0),
     fc: z.boolean(),
-    score_grade: z.array(
-        z.union([
-            z.literal("ssh"),
-            z.literal("sh"),
-            z.literal("ss"),
-            z.literal("s"),
-            z.literal("a"),
-            z.literal("b"),
-            z.literal("c"),
-            z.literal("d"),
-        ]),
-    ),
+    score_grade: z.array(z.union([
+        z.literal("ssh"),
+        z.literal("sh"),
+        z.literal("ss"),
+        z.literal("s"),
+        z.literal("a"),
+        z.literal("b"),
+        z.literal("c"),
+        z.literal("d"),
+    ])),
 });

@@ -1,0 +1,1 @@
+export const testFuck = (r: any) => r;

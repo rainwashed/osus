@@ -1,28 +1,30 @@
-FROM oven/bun:latest AS build
+# Build stage
+FROM oven/bun:canary AS build
 WORKDIR /app
 
 COPY package.json ./
-
-RUN bun install
-
 COPY . .
 
-RUN bun run build
+RUN bun install --ignore-scripts better-sqlite3
+RUN bun install --frozen-lockfile
 
-FROM oven/bun:latest AS production
+# Run Nuxt build
+RUN bun --bun run build
+
+# Production stage
+FROM oven/bun:canary AS runner
 WORKDIR /app
 
-COPY --from=build /app/.output /app/
+# Copy built app from previous stage
+COPY --from=build /app/.output ./.output
 
+# Set env vars
 ENV PORT=80
 ENV HOST=0.0.0.0
-
-# make sure to set the .env when using docker run or docker compose
-ENV SPOTIFY_CLIENT_ID=
-ENV SPOTIFY_CLIENT_SECRET=
-ENV OSU_CLIENT_ID=
-ENV OSU_CLIENT_SECRET=
+ENV NITRO_PORT=80
+ENV NITRO_HOST=0.0.0.0
 
 EXPOSE 80
 
-ENTRYPOINT [ "bun", "run", "/app/server/index.mjs" ]
+# Start Nitro server
+CMD ["bun", "--bun", "run", ".output/server/index.mjs"]
