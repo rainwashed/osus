@@ -59,6 +59,7 @@ const fetchAllOsuSongs = async (osuToken: string, osuId: string, osusConfigurati
 
     // need to remove duplicates FIX THIS
     // i think i fixed it
+    // nvm i dont think i did
     const removedDuplicateBeatmaps = removeDuplicateBeatmaps(beatmaps);
 
     console.log({ beatmaps });
@@ -86,18 +87,23 @@ const searchSpotifyForSong = async (artistSongName: string[]) => {
 };
 
 const searchFromKeywordsList = async (searchKeywords: string[][]) => {
+    const notificationBus = useNuxtApp().$bus;
+
     const songData = [];
     for (let i = 0; i < searchKeywords.length; i++) {
         const curSong = searchKeywords[i];
         try {
+            notificationBus.emit("notify", `attempting to search: ${curSong[0]} - ${curSong[1]}`)
             console.log(`attempting to search ${curSong}`);
             let songMeta = await searchSpotifyForSong(curSong);
 
             if (songMeta === undefined || songMeta === null) {
                 console.warn(`could not find ${curSong}, skipping`);
+                notificationBus.emit("notify", `could nto find: ${curSong[0]} - ${curSong[1]}`)
                 continue;
             }
 
+            notificationBus.emit("notify", `found: ${curSong[0]} - ${curSong[1]}`)
             songData.push(songMeta);
         } catch (_e) {
             console.warn(`skipping song ${curSong}`);
@@ -182,7 +188,7 @@ export const generatePlaylist = async (spotifyToken: string, osuToken: string) =
 
         notificationBus.emit("notify", "creating the spotify playlist");
         const playlistId = await createSpotifyPlaylist(spotifyToken, spotifyTrackIds, songTrackInformation[0].name);
-        notificationBus.emit("notify", `created the spotify playlist with id: ${playlistId}`)
+        notificationBus.emit("notify", `created the spotify playlist with id: ${playlistId}`);
 
         console.log({ playlistId });
 

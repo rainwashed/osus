@@ -1,4 +1,8 @@
-import { createSpotifyAuthorizationLink, elevateSpotifyAuthorizationCodeToAccessToken, returnSpotifyProxyUrl } from "../libs/spotify";
+import {
+    createSpotifyAuthorizationLink,
+    elevateSpotifyAuthorizationCodeToAccessToken,
+    returnSpotifyProxyUrl,
+} from "../libs/spotify";
 import { createOsuAuthorizationLink, elevateOsuAuthorizationCodeToAccessToken } from "../libs/osu";
 import { fetchToOsu } from "../libs/osu-passthrough";
 

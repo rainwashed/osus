@@ -9,7 +9,7 @@
         "preview": "nuxt preview",
         "postinstall": "nuxt prepare",
         "shadcn": "shadcn-vue",
-        "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json,vue}\"",
+        "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json,vue,css}\"",
         "cypress": "cypress"
     },
     "dependencies": {
@@ -47,6 +47,7 @@
         "zod": "^3.25.67"
     },
     "devDependencies": {
+        "@nuxtjs/color-mode": "^3.5.2",
         "@types/cypress": "^1.1.6",
         "@types/three": "^0.177.0",
         "autoprefixer": "^10.4.21",

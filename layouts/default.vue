@@ -6,6 +6,7 @@
     <main class="w-screen h-screen max-h-screen overflow-auto max-w-screen">
         <slot />
         <Toaster />
+        <OsusDarkModeToggle />
         <OsusDonateMeMoney />
     </main>
 </template>
