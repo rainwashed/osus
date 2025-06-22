@@ -27,7 +27,7 @@ export default defineNuxtConfig({
         "shadcn-nuxt",
         "@formkit/auto-animate/nuxt",
         "@nuxt/content",
-        '@nuxtjs/color-mode'
+        "@nuxtjs/color-mode",
     ],
     colorMode: {
         classSuffix: "",
