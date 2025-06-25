@@ -47,6 +47,8 @@
         "zod": "^3.25.67"
     },
     "devDependencies": {
+        "@iconify-json/radix-icons": "^1.2.2",
+        "@iconify-json/simple-icons": "^1.2.40",
         "@nuxtjs/color-mode": "^3.5.2",
         "@types/cypress": "^1.1.6",
         "@types/three": "^0.177.0",
